@@ -2,7 +2,7 @@
 from sqlmodel import SQLModel, create_engine
 
 from app.core.config import DATABASE_URL
-from app.db.models import Category
+from app.db.models import Category, Candidate
 
 engine = create_engine(
     DATABASE_URL,
