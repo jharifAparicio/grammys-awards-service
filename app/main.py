@@ -6,7 +6,7 @@ from app.db.database import create_db
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # create_db()
+    create_db()
     yield
 
 app = FastAPI(
