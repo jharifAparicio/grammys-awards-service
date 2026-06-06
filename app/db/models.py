@@ -1,12 +1,13 @@
 # app/bd/models.py
 from datetime import datetime
-from sqlmodel import SQLModel, Field
+from sqlmodel import SQLModel, Field, Relationship
+from typing import Optional, List
 
 # Category model
 class Category(SQLModel, table=True):
     __tablename__ = "categories"
 
-    id: int | None = Field(default=None, primary_key=True)
+    id: Optional[int] = Field(default=None, primary_key=True)
 
     name: str = Field(
         max_length=100,
@@ -14,7 +15,7 @@ class Category(SQLModel, table=True):
         index=True
     )
 
-    description: str | None = Field(
+    description: Optional[str] = Field(
         default=None,
         max_length=500
     )
@@ -23,6 +24,10 @@ class Category(SQLModel, table=True):
 
     created_at: datetime = Field(
         default_factory=datetime.utcnow
+    )
+
+    candidates: List["Candidate"] = Relationship(
+        back_populates="category"
     )
 
 # Candidate model
@@ -50,4 +55,12 @@ class Candidate(SQLModel, table=True):
 
     created_at: datetime = Field(
         default_factory=datetime.utcnow
+    )
+
+    category_id: int = Field(
+        foreign_key="categories.id"
+    )
+
+    category: Optional["Category"] = Relationship(
+        back_populates="candidates"
     )
