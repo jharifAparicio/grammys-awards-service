@@ -1,6 +1,20 @@
-# app/bd/models.py
-from datetime import datetime
-from sqlmodel import SQLModel, Field
+# app/db/models.py
+from datetime import datetime, timezone
+from sqlmodel import SQLModel, Field, Relationship
+
+
+class Nomination(SQLModel, table=True):
+    """Tabla intermedia para la relación Muchos a Muchos entre Categorías y Candidatos."""
+    __tablename__ = "nominations"
+
+    category_id: int | None = Field(
+        default=None, foreign_key="categories.id", primary_key=True
+    )
+    candidate_id: int | None = Field(
+        default=None, foreign_key="candidates.id", primary_key=True
+    )
+    # Podemos agregar metadatos de la nominación en el futuro, ej. year: int
+
 
 # Category model
 class Category(SQLModel, table=True):
@@ -22,8 +36,14 @@ class Category(SQLModel, table=True):
     is_active: bool = Field(default=True)
 
     created_at: datetime = Field(
-        default_factory=datetime.utcnow
+        default_factory=lambda: datetime.now(timezone.utc)
     )
+
+    # Relación muchos a muchos con Candidate a través de Nomination
+    candidates: list["Candidate"] = Relationship(
+        back_populates="categories", link_model=Nomination
+    )
+
 
 # Candidate model
 class Candidate(SQLModel, table=True):
@@ -49,5 +69,10 @@ class Candidate(SQLModel, table=True):
     is_active: bool = Field(default=True)
 
     created_at: datetime = Field(
-        default_factory=datetime.utcnow
+        default_factory=lambda: datetime.now(timezone.utc)
+    )
+
+    # Relación muchos a muchos con Category a través de Nomination
+    categories: list["Category"] = Relationship(
+        back_populates="candidates", link_model=Nomination
     )
