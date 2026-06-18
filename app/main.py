@@ -7,6 +7,7 @@ from app.db.database import create_db
 
 logger = logging.getLogger(__name__)
 
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # Inicializar la base de datos al arrancar
@@ -17,17 +18,12 @@ async def lifespan(app: FastAPI):
         logger.error(f"Error al inicializar la base de datos: {e}")
     yield
 
-app = FastAPI(
-    title="Awards Service",
-    version="1.0.0",
-    lifespan=lifespan
-)
+
+app = FastAPI(title="Awards Service", version="1.0.0", lifespan=lifespan)
 
 app.include_router(health_router)
 
+
 @app.get("/")
 def root():
-    return {
-        "service": "awards-service",
-        "status": "online"
-    }
+    return {"service": "awards-service", "status": "online"}
