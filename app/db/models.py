@@ -5,6 +5,7 @@ from sqlmodel import SQLModel, Field, Relationship
 
 class Nomination(SQLModel, table=True):
     """Tabla intermedia para la relación Muchos a Muchos entre Categorías y Candidatos."""
+
     __tablename__ = "nominations"
 
     category_id: int | None = Field(
@@ -22,22 +23,13 @@ class Category(SQLModel, table=True):
 
     id: int | None = Field(default=None, primary_key=True)
 
-    name: str = Field(
-        max_length=100,
-        unique=True,
-        index=True
-    )
+    name: str = Field(max_length=100, unique=True, index=True)
 
-    description: str | None = Field(
-        default=None,
-        max_length=500
-    )
+    description: str | None = Field(default=None, max_length=500)
 
     is_active: bool = Field(default=True)
 
-    created_at: datetime = Field(
-        default_factory=lambda: datetime.now(timezone.utc)
-    )
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
     # Relación muchos a muchos con Candidate a través de Nomination
     candidates: list["Candidate"] = Relationship(
@@ -51,26 +43,15 @@ class Candidate(SQLModel, table=True):
 
     id: int | None = Field(default=None, primary_key=True)
 
-    name: str = Field(
-        max_length=150,
-        index=True
-    )
+    name: str = Field(max_length=150, index=True)
 
-    biography: str | None = Field(
-        default=None,
-        max_length=1000
-    )
+    biography: str | None = Field(default=None, max_length=1000)
 
-    image_url: str | None = Field(
-        default=None,
-        max_length=500
-    )
+    image_url: str | None = Field(default=None, max_length=500)
 
     is_active: bool = Field(default=True)
 
-    created_at: datetime = Field(
-        default_factory=lambda: datetime.now(timezone.utc)
-    )
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
     # Relación muchos a muchos con Category a través de Nomination
     categories: list["Category"] = Relationship(
