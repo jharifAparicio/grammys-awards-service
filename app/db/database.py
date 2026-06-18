@@ -10,4 +10,5 @@ engine = create_engine(
 )
 
 def create_db():
+    import app.db.models  # noqa: F401
     SQLModel.metadata.create_all(engine)

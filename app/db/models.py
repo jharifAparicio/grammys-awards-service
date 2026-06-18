@@ -1,5 +1,5 @@
-# app/bd/models.py
-from datetime import datetime
+# app/db/models.py
+from datetime import datetime, timezone
 from sqlmodel import SQLModel, Field
 
 
@@ -22,5 +22,5 @@ class Category(SQLModel, table=True):
     is_active: bool = Field(default=True)
 
     created_at: datetime = Field(
-        default_factory=datetime.utcnow
+        default_factory=lambda: datetime.now(timezone.utc)
     )
