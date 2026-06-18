@@ -1,13 +1,26 @@
-# app/bd/models.py
-from datetime import datetime
+# app/db/models.py
+from datetime import datetime, timezone
 from sqlmodel import SQLModel, Field, Relationship
-from typing import Optional, List
+
+
+class Nomination(SQLModel, table=True):
+    """Tabla intermedia para la relación Muchos a Muchos entre Categorías y Candidatos."""
+    __tablename__ = "nominations"
+
+    category_id: int | None = Field(
+        default=None, foreign_key="categories.id", primary_key=True
+    )
+    candidate_id: int | None = Field(
+        default=None, foreign_key="candidates.id", primary_key=True
+    )
+    # Podemos agregar metadatos de la nominación en el futuro, ej. year: int
+
 
 # Category model
 class Category(SQLModel, table=True):
     __tablename__ = "categories"
 
-    id: Optional[int] = Field(default=None, primary_key=True)
+    id: int | None = Field(default=None, primary_key=True)
 
     name: str = Field(
         max_length=100,
@@ -15,7 +28,7 @@ class Category(SQLModel, table=True):
         index=True
     )
 
-    description: Optional[str] = Field(
+    description: str | None = Field(
         default=None,
         max_length=500
     )
@@ -23,12 +36,14 @@ class Category(SQLModel, table=True):
     is_active: bool = Field(default=True)
 
     created_at: datetime = Field(
-        default_factory=datetime.utcnow
+        default_factory=lambda: datetime.now(timezone.utc)
     )
 
-    candidates: List["Candidate"] = Relationship(
-        back_populates="category"
+    # Relación muchos a muchos con Candidate a través de Nomination
+    candidates: list["Candidate"] = Relationship(
+        back_populates="categories", link_model=Nomination
     )
+
 
 # Candidate model
 class Candidate(SQLModel, table=True):
@@ -54,13 +69,10 @@ class Candidate(SQLModel, table=True):
     is_active: bool = Field(default=True)
 
     created_at: datetime = Field(
-        default_factory=datetime.utcnow
+        default_factory=lambda: datetime.now(timezone.utc)
     )
 
-    category_id: int = Field(
-        foreign_key="categories.id"
-    )
-
-    category: Optional["Category"] = Relationship(
-        back_populates="candidates"
+    # Relación muchos a muchos con Category a través de Nomination
+    categories: list["Category"] = Relationship(
+        back_populates="candidates", link_model=Nomination
     )
